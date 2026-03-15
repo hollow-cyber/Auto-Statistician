@@ -4,7 +4,7 @@
 [![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B.svg)](https://streamlit.io/)
 [![License: Non-Commercial](https://img.shields.io/badge/License-Non_Commercial-red.svg)](#)
 
-**Auto-Statistician** 是一款专为临床医学研究和科研人员打造的**本地化自动统计分析 Web UI 工具**。只需导入数据，程序即可自动识别变量类型、执行正态性检验、智能选择对应的统计学检验方法，并一键生成符合学术期刊发表标准的“基线特征表（Table 1）”与生存分析结果。
+**Auto-Statistician** 是一款专为临床医学研究和科研人员打造的**自动统计分析 Web UI 工具**。只需导入数据，程序即可自动识别变量类型、执行正态性检验、智能选择对应的统计学检验方法，并一键生成符合学术期刊发表标准的“基线特征表（Table 1）”与生存分析结果。
 
 > 💡 **背景与致谢**：本项目受到 **四川大学华西医院、国家老年疾病临床医学研究中心** 的支持。程序仅供科研与学习使用，**请勿商用**。
 
