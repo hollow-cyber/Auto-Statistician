@@ -231,7 +231,7 @@ def show_custom_toast(
 	# 生成唯一的 ID 避免 CSS 类名冲突
 	uid = str(uuid.uuid4())[:8]
 
-	# 获取当前屏幕高度，这里全默认为1080
+	# 获取当前屏幕高度，部署之后无法用tkinter，这里全默认为1080
 	height = 1080
 	top_distance = int(height * top_gap) if top_gap < 1 else int(top_gap)
 	
