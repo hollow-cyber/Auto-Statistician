@@ -50,7 +50,7 @@ pip install pandas numpy scipy lifelines streamlit chardet
 ### 4. 启动程序
 在项目根目录下运行以下命令启动 Web UI：
 ```bash
-streamlit run 自动统计分析专家v1.0-webUI.py
+streamlit run 自动统计分析专家-webUI.py
 ```
 *(运行后，浏览器会自动打开 `http://localhost:8501`)*
 
