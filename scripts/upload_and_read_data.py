@@ -53,7 +53,7 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str]:
 	
 	uploaded_file, file_dir, file_name = None, None, None
 	file_upload_method = st.sidebar.radio("请选择上传文件或者输入路径读取文件：", ["上传文件", "输入路径读取文件"],
-										  disable=True,
+										  disabled=True,
 	                                      key="method_radio",
 	                                      horizontal=True,
 	                                      # 每次切换选项，都先执行清空操作
