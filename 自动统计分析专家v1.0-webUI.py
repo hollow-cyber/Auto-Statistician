@@ -34,7 +34,7 @@ def main() -> None:
 		main_title="自动统计分析专家v1.0",
 		sidebar_title="程序参数设置",
 		logo_path=image_path,
-		notice_str="本程序受到四川大学华西医院、国家老年疾病临床医学研究中心的支持，请勿商用。技术支持与反馈：2013850694@qq.com"
+		notice_str="本程序受到四川大学华西医院、国家老年疾病临床医学研究中心的支持，请勿商用。"
 	)
 	
 	with st.expander("点击查看当前版本更新特性功能"):
