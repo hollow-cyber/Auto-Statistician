@@ -8,6 +8,7 @@ numpy>=1.22.0
 # 统计学检验与分析
 scipy>=1.9.0
 lifelines>=0.27.0
+scikit-learn>=1.8.0
 
 # 文件编码自动检测
 chardet>=5.0.0
