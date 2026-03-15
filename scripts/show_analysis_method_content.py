@@ -1,3 +1,8 @@
+"""
+This Script is Supported by Department of Geriatrics and National Clinical Research Center for Geriatrics,
+West China Hospital, Sichuan University.
+"""
+
 import streamlit as st
 
 
