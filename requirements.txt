@@ -1,0 +1,13 @@
+# Web UI 框架
+streamlit>=1.20.0
+
+# 数据处理与科学计算
+pandas>=1.5.0
+numpy>=1.22.0
+
+# 统计学检验与分析
+scipy>=1.9.0
+lifelines>=0.27.0
+
+# 文件编码自动检测
+chardet>=5.0.0
