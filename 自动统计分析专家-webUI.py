@@ -31,7 +31,7 @@ def main() -> None:
 	# 获取当前脚本所在目录
 	current_dir = Path(__file__).parent
 	# 使用 / 操作符拼接路径
-	image_path = current_dir / "imgs" / "logo.png"
+	image_path = current_dir / "imgs" / "华西logo.ico"
 	# image_path = os.path.join(current_dir, r'imgs\华西logo.ico')
 	
 	# 进行主要窗口标题设置
