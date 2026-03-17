@@ -52,13 +52,13 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 	st.sidebar.markdown("**数据文件上传/选择设置**")
 	
 	uploaded_file, file_dir, file_name = None, None, None
-	file_upload_method = st.sidebar.radio("请选择上传文件或者输入路径读取文件：", ["上传文件", "输入路径读取文件"],
-	                                      key="method_radio",
-	                                      horizontal=True,
-	                                      # 每次切换选项，都先执行清空操作
-	                                      on_change=clear_all_inputs,
-	                                      help="选择上传文件会把文件上传到streamlit服务器，如果是隐私数据建议选择通过输入路径读取文件，这样就只会读取到本地计算机的内存中")
-	
+	# file_upload_method = st.sidebar.radio("请选择上传文件或者输入路径读取文件：", ["上传文件", "输入路径读取文件"],
+	                                      # key="method_radio",
+	                                      # horizontal=True,
+	                                      # # 每次切换选项，都先执行清空操作
+	                                      # on_change=clear_all_inputs,
+	                                      # help="选择上传文件会把文件上传到streamlit服务器，如果是隐私数据建议选择通过输入路径读取文件，这样就只会读取到本地计算机的内存中")
+	file_upload_method = "上传文件"
 	if file_upload_method == "上传文件":
 		# 在侧边栏创建文件上传器
 		uploaded_file = st.sidebar.file_uploader(
