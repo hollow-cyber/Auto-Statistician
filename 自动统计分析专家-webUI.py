@@ -6,6 +6,7 @@ West China Hospital, Sichuan University.
 import os, time
 import pandas as pd
 import streamlit as st
+from pathlib import Path
 from scipy import stats
 from itertools import zip_longest
 
@@ -27,9 +28,13 @@ def main() -> None:
 	if 'format_results_df' not in st.session_state:
 		st.session_state.format_results_df = None
 	
-	# 进行主要窗口标题设置
-	image_path = r'imgs\华西logo.ico'
+	# 获取当前脚本所在目录
+	current_dir = Path(__file__).parent
+	# 使用 / 操作符拼接路径
+	# image_path = current_dir / "images" / "logo.png"
+	image_path = os.path.join(current_dir, r'imgs\华西logo.ico')
 	
+	# 进行主要窗口标题设置
 	set_st_header(
 		main_title="自动统计分析专家v1.0",
 		sidebar_title="程序参数设置",
