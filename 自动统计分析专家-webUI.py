@@ -28,16 +28,8 @@ def main() -> None:
 	if 'format_results_df' not in st.session_state:
 		st.session_state.format_results_df = None
 	
-	# 获取当前脚本所在目录
-	current_dir = Path(__file__).parent
-	# 使用 / 操作符拼接路径
-	image_path = current_dir / "imgs" / "华西logo.ico"
-	# image_path = os.path.join(current_dir, r'imgs\华西logo.ico')
-	
-	img_path = os.path.abspath(r'imgs/华西logo.ico')
-	st.write(img_path, os.path.exists(img_path))
-	
 	# 进行主要窗口标题设置
+	image_path = os.path.abspath('imgs/华西logo.ico')
 	set_st_header(
 		main_title="自动统计分析专家v1.0",
 		sidebar_title="程序参数设置",
