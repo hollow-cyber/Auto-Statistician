@@ -237,7 +237,7 @@ def show_custom_toast(
 		root = tkinter.Tk()
 		height = root.winfo_screenheight()
 		root.destroy()
-	except ModuleNotFoundError:
+	except ImportError:
 		# 设置默认屏幕高度为1080
 		height = 1080
 	top_distance = int(height * top_gap) if top_gap < 1 else int(top_gap)
