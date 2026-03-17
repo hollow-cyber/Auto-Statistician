@@ -2,6 +2,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B.svg)](https://streamlit.io/)
+[![Institution: WCH](https://img.shields.io/badge/Institution-West%20China%20Hospital-blue)](http://www.wchscu.cn/)
 [![License: Non-Commercial](https://img.shields.io/badge/License-Non_Commercial-red.svg)](#)
 
 **Auto-Statistician** 是一款专为临床医学研究和科研人员打造的**自动统计分析 Web UI 工具**。只需导入数据，程序即可自动识别变量类型、执行正态性检验、智能选择对应的统计学检验方法，并一键生成符合学术期刊发表标准的“基线特征表（Table 1）”或生存分析结果。
@@ -85,4 +86,4 @@ streamlit run 自动统计分析专家-webUI.py
 如果您在使用过程中遇到任何 Bug，或有新的功能建议，欢迎提交 Issue。
 
 ---
-*✨ "阿伟你又在连夜搞科研喔。休息一下吧，去收个病人好不好？"* 🧐
+© 2026 West China Hospital, Sichuan University, China.   
