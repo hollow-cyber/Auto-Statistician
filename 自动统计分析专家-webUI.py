@@ -28,7 +28,7 @@ def main() -> None:
 		st.session_state.format_results_df = None
 	
 	# 进行主要窗口标题设置
-	image_path = os.path.abspath('imgs\华西logo.ico')
+	image_path = r'imgs\华西logo.ico'
 	
 	set_st_header(
 		main_title="自动统计分析专家v1.0",
