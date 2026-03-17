@@ -68,7 +68,7 @@ def set_st_header(
 		unsafe_allow_html=True
 	)
 	
-	if logo_path and os.path.isfile(logo_path):
+	if logo_path:
 		# 转换图片为 base64
 		logo_base64 = get_image_base64(logo_path)
 		
