@@ -34,7 +34,7 @@ def main() -> None:
 		main_title="自动统计分析专家v1.0",
 		sidebar_title="程序参数设置",
 		logo_path=image_path,
-		notice_str="本程序受到四川大学华西医院、国家老年疾病临床医学研究中心的支持，请勿商用。"
+		notice_str="本项目受到四川大学华西医院、国家老年疾病临床医学研究中心的支持，请勿商用。"
 	)
 	
 	with st.expander("点击查看当前版本更新特性功能"):
@@ -50,9 +50,9 @@ def main() -> None:
 	st.divider()
 	
 	# 能传出data则一定成功读取了数据，所以后面不用判断if data
-	data, file_name = upload_and_read_data()
+	data, file_name, output_file_extension = upload_and_read_data()
 	# 让用户选择是否处理数据集中的缺失值
-	data = st_impute_data(data, file_name)
+	data = st_impute_data(data, file_name, output_file_extension)
 	
 	# if len(data) < 30:
 	# 	st.error(f"❌ 数据样本量太小（共{len(data)}条有效数据），无法进行统计检验，请上传至少包含30条有效数据的文件。")
@@ -374,10 +374,11 @@ def main() -> None:
 				                                                             p_decimal_places,
 				                                                             if_category_space,
 				                                                             if_star_symbol)
-	
+			show_custom_toast("统计分析处理完毕", icon="🎉")
+			
 	if st.session_state.format_results_df is not None:
 		# 将格式化的结果转换为TSV格式的字符串
-		tsv_data = convert_df_to_tsv(st.session_state.format_results_df, hide_index=True)
+		tsv_data = convert_df_to_tsv(st.session_state.format_results_df, file_extension=output_file_extension, hide_index=True)
 		st.success(f"""
 		🎉 {time.strftime("%Y-%m-%d %H:%M:%S")}：格式化描述性和统计分析结果已经计算完毕，详见下表，
 		你可点击下方的下载按钮进行下载。同时你也可复制下面关于统计分析方法学的介绍内容到你的文章当中。
@@ -394,7 +395,7 @@ def main() -> None:
 				if st.download_button(
 						label="下载结果文件",
 						data=tsv_data,
-						file_name=f"{os.path.splitext(file_name)[0]}-{analysis_task}结果-{time.strftime("%Y-%m-%d %H:%M:%S")}.txt",
+						file_name=f"{os.path.splitext(file_name)[0]}-{analysis_task}结果-{time.strftime("%Y-%m-%d %H:%M:%S")}{output_file_extension}",
 						mime="text/plain",
 						type="primary",
 				):
