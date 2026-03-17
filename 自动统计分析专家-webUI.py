@@ -350,7 +350,7 @@ def main() -> None:
 		if st.button('开始统计分析'):
 			scripts.global_vars.button_click_times += 1
 			if scripts.global_vars.button_click_times % 5 == 0:
-				show_custom_toast("阿伟你又在连夜搞科研喔。休息一下吧，去收个病人好不好？", icon="🧐")
+				show_custom_toast("阿伟你又在连夜搞科研喔。休息一下吧，去收个病人好不好？", icon="🧐", top_gap=0.5)
 			
 			if analysis_task == analysis_funcs[1]:
 				st.session_state.format_results_df = format_statistical_results(X, y,
