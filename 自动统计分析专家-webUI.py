@@ -6,11 +6,9 @@ West China Hospital, Sichuan University.
 import os, time
 import pandas as pd
 import streamlit as st
-from pathlib import Path
 from scipy import stats
 from itertools import zip_longest
 
-from scripts.clear_st_session_state import clear_st_session_state
 from scripts.set_st_custom_style import set_st_header, show_custom_toast
 from scripts.upload_and_read_data import upload_and_read_data
 from scripts.simple_data_processing import st_impute_data
@@ -23,6 +21,11 @@ from scripts.convert_df_to_tsv import convert_df_to_tsv
 import scripts.global_vars
 
 
+def clear_st_results_df() -> None:
+	"""定义一个回调函数，用来清空计算结果，保证在重新选择执行的任务后需要重新点击计算按钮才出现结果"""
+	st.session_state.pop('format_results_df', None)
+	
+	
 def main() -> None:
 	# 使用 st.session_state 动态控制格式化结果的显示
 	if 'format_results_df' not in st.session_state:
@@ -69,7 +72,7 @@ def main() -> None:
 	st.sidebar.markdown("**请选择你要进行的操作：**")
 	analysis_task = st.sidebar.segmented_control('请选择你要进行的操作：', analysis_funcs.values(),
 	                                             default=list(analysis_funcs.values())[0],
-	                                             on_change=clear_st_session_state, label_visibility="collapsed")
+	                                             on_change=clear_st_results_df, label_visibility="collapsed")
 	
 	cols = st.sidebar.columns([1, 1])
 	if analysis_task == analysis_funcs[2]:
