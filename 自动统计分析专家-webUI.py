@@ -37,7 +37,8 @@ def main() -> None:
 		main_title="自动统计分析专家v1.0",
 		sidebar_title="程序参数设置",
 		logo_path=image_path,
-		notice_str="本项目受到四川大学华西医院、国家老年疾病临床医学研究中心的支持，请勿商用。"
+		notice_str="本项目受到四川大学华西医院、国家老年疾病临床医学研究中心的支持，请勿商用。",
+		warning_str = None,
 	)
 	
 	with st.expander("点击查看当前版本更新特性功能"):
