@@ -10,11 +10,15 @@ import pandas as pd
 import streamlit as st
 from typing import Literal
 
-from scripts.clear_st_session_state import clear_st_session_state
 from scripts.set_st_custom_style import show_custom_toast
 from scripts.convert_df_to_tsv import convert_df_to_tsv
 
 
+def clear_st_data_processed() -> None:
+	"""定义一个回调函数，用来清空计算结果，保证在重新选择执行的任务后需要重新点击计算按钮才出现结果"""
+	st.session_state.pop('data_processed', None)
+	
+	
 def get_original_precision(
 		series: pd.Series,
 ) -> int:
@@ -215,7 +219,7 @@ def st_impute_data(
 	
 	if detect_nan(data):
 		st.sidebar.divider()
-		if st.sidebar.toggle('简单处理原数据集中的缺失值', on_change=clear_st_session_state):
+		if st.sidebar.toggle('简单处理原数据集中的缺失值', on_change=clear_st_data_processed):
 			if "data_processed" not in st.session_state:
 				st.session_state.data_processed = None
 			
@@ -223,7 +227,7 @@ def st_impute_data(
 				'1': '删除数据集中有空值的数据条/列',
 				'2': '按同类别样本特征数据进行简单缺失值插补',
 			}
-			processing_func = st.sidebar.radio('缺失值处理方式：', func_dict.values())
+			processing_func = st.sidebar.radio('缺失值处理方式：', func_dict.values(), on_change=clear_st_data_processed)
 			
 			# 设置一些参数的默认值
 			delete_type: Literal["col", "row"] = "row"
