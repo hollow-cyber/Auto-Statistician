@@ -33,7 +33,9 @@ def main() -> None:
 	# 使用 / 操作符拼接路径
 	image_path = current_dir / "imgs" / "华西logo.ico"
 	# image_path = os.path.join(current_dir, r'imgs\华西logo.ico')
-	st.write(os.path.abspath(r'imgs\华西logo.ico'))
+	
+	img_path = os.path.abspath(r'imgs\华西logo.ico')
+	st.write(img_path, os.path.exists(img_path))
 	
 	# 进行主要窗口标题设置
 	set_st_header(
