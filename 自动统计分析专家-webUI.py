@@ -398,7 +398,8 @@ def main() -> None:
 				if st.download_button(
 						label="下载结果文件",
 						data=tsv_data,
-						file_name=f"{os.path.splitext(file_name)[0]}-{analysis_task}结果-{time.strftime("%Y-%m-%d %H:%M:%S")}{output_file_extension}",
+						# 这里analysis_task从第2个字符串开始，因为前面有符号和空格
+						file_name=f"{os.path.splitext(file_name)[0]}-{analysis_task[2:]}结果-{time.strftime("%Y-%m-%d %H:%M:%S")}{output_file_extension}",
 						mime="text/plain",
 						type="primary",
 				):
