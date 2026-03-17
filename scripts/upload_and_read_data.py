@@ -22,16 +22,16 @@ def clear_all_inputs() -> None:
 	st.session_state.pop("file_select", None)  # 清空文件下拉框
 
 
-def upload_and_read_data() -> tuple[pd.DataFrame, str]:
+def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 	"""
 	用户上传/选择数据文件并返回读取的dataframe，同时给出数据文件信息
 	
 	Returns:
-		数据内容，上传文件名称
+		数据内容，上传文件名称，上传文件格式名
 	"""
 	# 显示示例文件格式
 	with st.expander("📋 查看示例文件格式"):
-		st.markdown("#### 制表符分隔示例：")
+		st.markdown("#### 制表符分隔示例（excel内容直接复制到txt是这种格式）：")
 		demo_sep = [
 			"姓名    年龄    城市    工资",
 			"张三    25    北京    5000",
@@ -40,7 +40,7 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str]:
 		]
 		st.code("\n".join(demo_sep))
 		
-		st.markdown("#### 半角逗号分隔示例：")
+		st.markdown("#### 半角逗号分隔示例（csv文件内容是这种格式）：")
 		demo_comma = [
 			"姓名,年龄,城市,工资",
 			"张三,25,北京,5000",
@@ -53,7 +53,6 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str]:
 	
 	uploaded_file, file_dir, file_name = None, None, None
 	file_upload_method = st.sidebar.radio("请选择上传文件或者输入路径读取文件：", ["上传文件", "输入路径读取文件"],
-										  disabled=True,
 	                                      key="method_radio",
 	                                      horizontal=True,
 	                                      # 每次切换选项，都先执行清空操作
@@ -68,6 +67,9 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str]:
 			key="file_uploader",
 			# help="支持多种列数据分隔符号内容的txt文件"
 		)
+		file_extension = ".txt"
+		if uploaded_file:
+			file_extension = os.path.splitext(uploaded_file.name)[1].lower()
 	else:
 		file_dir = st.sidebar.text_input("txt/csv文件所在的文件夹路径：", placeholder="例如：D:\数据处理\示例文件夹",
 		                                 key="file_dir_input",
@@ -96,14 +98,25 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str]:
 				                                 placeholder="请下拉选择文件")
 				if file_name is None:
 					st.stop()
-	
-	# 列分隔符选择
-	sep_option = st.sidebar.selectbox(
-		"列数据分隔符类型：",
-		["制表符(\\t)", "半角逗号(,)", "单空格", "半角分号(;)"],
-		index=0,
-		help="选择文件中使用的列内容分隔符，csv文件为半角逗号(,)"
-	)
+				file_extension = os.path.splitext(file_name)[1].lower()
+				
+	cols = st.sidebar.columns([1, 1])
+	with cols[0]:
+		# 列分隔符选择
+		sep_option = st.selectbox(
+			"列数据分隔符类型：",
+			["制表符(\\t)", "半角逗号(,)", "单空格", "半角分号(;)"],
+			index=1 if file_extension == ".csv" else 0,
+			help="选择文件中使用的列内容分隔符，csv文件为半角逗号(,)"
+		)
+	with cols[1]:
+		# 列分隔符选择
+		output_file_extension = st.selectbox(
+			"结果文件输出格式：",
+			[".txt", ".csv",],
+			index=1 if file_extension == ".csv" else 0,
+		)
+		
 	# 映射分隔符
 	sep_map = {
 		"制表符(\\t)": "\t",
@@ -203,8 +216,4 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str]:
 	st.subheader("📰 描述性数据结果")
 	st.dataframe(df.describe(), use_container_width=True)
 	
-	return df, file_name
-
-
-if __name__ == "__main__":
-	data = upload_and_read_data()
+	return df, file_name, output_file_extension

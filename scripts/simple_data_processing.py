@@ -58,7 +58,11 @@ def detect_nan(
 	arr = data.values if isinstance(data, pd.DataFrame) else data
 	
 	# 获取所有缺失值的布尔掩码
-	mask = np.isnan(arr)
+	try:
+		mask = np.isnan(arr)
+	except TypeError:
+		st.error("❌ 程序无法处理该数据类型，请检查你传入的数据集及分隔符号。")
+		st.stop()
 	
 	# 统计汇总信息
 	total_nan = np.sum(mask)
@@ -66,7 +70,7 @@ def detect_nan(
 		rows_with_nan = np.sum(np.any(mask, axis=1))
 		cols_with_nan = np.sum(np.any(mask, axis=0))
 		st.warning(
-			f"程序检测到原始数据集中共有 {cols_with_nan} 列 {rows_with_nan} 行包含缺失值，共计 {total_nan} 个缺失值。")
+			f"⚠️ 程序检测到原始数据集中共有 {cols_with_nan} 列 {rows_with_nan} 行包含缺失值，共计 {total_nan} 个缺失值。")
 		return True
 	else:
 		return False
@@ -195,6 +199,7 @@ def simple_impute_nan(
 def st_impute_data(
 		data: pd.DataFrame,
 		file_name: str,
+		file_extension: str = '.txt',
 ) -> pd.DataFrame:
 	"""
 	检测用户上传的原始数据集是否包含缺失值，并让用户选择是否进行简单处理。
@@ -202,6 +207,7 @@ def st_impute_data(
 	Args:
 		data: 原始数据集。
 		file_name: 数据文件名。
+		file_extension: 拟输出的文件类型。
 
 	Returns:
 		处理后的数据集。
@@ -217,7 +223,7 @@ def st_impute_data(
 				'1': '删除数据集中有空值的数据条/列',
 				'2': '按同类别样本特征数据进行简单缺失值插补',
 			}
-			processing_func = st.sidebar.radio('请选择缺失值处理方式：', func_dict.values())
+			processing_func = st.sidebar.radio('缺失值处理方式：', func_dict.values())
 			
 			# 设置一些参数的默认值
 			delete_type: Literal["col", "row"] = "row"
@@ -234,15 +240,15 @@ def st_impute_data(
 			constant_val = 0
 			
 			if processing_func == func_dict['1']:
-				delete_type = st.sidebar.radio('请选择删除缺失值的方式：', ['删除行', '删除列'], horizontal=True,
+				delete_type = st.sidebar.radio('删除缺失值的方式：', ['删除行', '删除列'], horizontal=True,
 				                               help="此方法用来删除缺失值所在的行/列，会大大降低数据利用度")
 				delete_type = "row" if delete_type == '删除行' else "col"
 			else:
-				match_cols = st.sidebar.multiselect('请选择需要按照哪些相同特征列进行缺失值插补：', options=data.columns,
+				match_cols = st.sidebar.multiselect('需要按照哪些相同特征列进行缺失值插补：', options=data.columns,
 				                                    help="对于每个缺失值，程序会找到缺失值数据条与你选择的列的值完全相同的所有行，并使用这些行的特征进行插补。如果不选择则表示使用该缺失值所在列有值的所有数据条。")
 				if not match_cols:
 					match_cols = None
-				impute_method = st.sidebar.selectbox('请选择缺失值插补方式：', impute_method_dict.keys())
+				impute_method = st.sidebar.selectbox('缺失值插补方式：', impute_method_dict.keys())
 				if impute_method == '常数填充':
 					constant_val = st.sidebar.text_input('请输入用于填充缺失值的常数：', placeholder="如：3.1415")
 					if not constant_val:
@@ -268,8 +274,8 @@ def st_impute_data(
 				if st.session_state.data_processed is not None:
 					if st.download_button(
 							label="下载结果文件",
-							data=convert_df_to_tsv(st.session_state.data_processed, hide_index=True),
-							file_name=f"{os.path.splitext(file_name)[0]}-简单插补结果-{time.strftime("%Y-%m-%d %H:%M:%S")}.txt",
+							data=convert_df_to_tsv(st.session_state.data_processed, file_extension=file_extension, hide_index=True),
+							file_name=f"{os.path.splitext(file_name)[0]}-简单插补结果-{time.strftime("%Y-%m-%d %H:%M:%S")}{file_extension}",
 							mime="text/plain",
 							type="primary",
 					):

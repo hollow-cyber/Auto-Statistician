@@ -198,7 +198,7 @@ def show_custom_toast(
 		total_time: int | float = 2.5,
 		fade_in_time: int | float = 0.25,
 		fade_out_time: int | float = 0.5,
-		top_gap: int | float = 0.5,
+		top_gap: int | float = 0.4,
 ) -> None:
 	"""显示一个基于纯 CSS 动画的非阻塞提示窗口。
 
@@ -231,8 +231,15 @@ def show_custom_toast(
 	# 生成唯一的 ID 避免 CSS 类名冲突
 	uid = str(uuid.uuid4())[:8]
 
-	# 获取当前屏幕高度，部署之后无法用tkinter，这里全默认为1080
-	height = 1080
+	# 获取当前屏幕高度
+	try:
+		import tkinter
+		root = tkinter.Tk()
+		height = root.winfo_screenheight()
+		root.destroy()
+	except ModuleNotFoundError:
+		# 设置默认屏幕高度为1080
+		height = 1080
 	top_distance = int(height * top_gap) if top_gap < 1 else int(top_gap)
 	
 	toast_html = f"""
