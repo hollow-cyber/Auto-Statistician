@@ -1,9 +1,8 @@
 # Auto-Statistician (自动统计分析专家) 📊🏥
 
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B.svg)](https://streamlit.io/)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Open%20App-FF4B4B?style=flat&logo=Streamlit&logoColor=white)](https://sarcopenia-risk-analytics-j5mybxvzszqvdazhbxtjrf.streamlit.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Institution: WCH](https://img.shields.io/badge/Institution-West%20China%20Hospital-blue)](http://www.wchscu.cn/)
-[![License: Non-Commercial](https://img.shields.io/badge/License-Non_Commercial-red.svg)](#)
 
 **Auto-Statistician** 是一款专为临床医学研究和科研人员打造的**自动统计分析 Web UI 工具**。只需导入数据，程序即可自动识别变量类型、执行正态性检验、智能选择对应的统计学检验方法，并一键生成符合学术期刊发表标准的“基线特征表（Table 1）”或生存分析结果。
 
@@ -30,6 +29,10 @@
 *   **缺失值处理**：支持删除包含空值的行/列，或使用均值、中位数、众数、随机数、常数进行简单插补。还支持**按同类别样本特征分组进行缺失值插补**。
 
 ---
+## 💻 在线访问
+**👉 [点击进入：自动统计分析专家](https://auto-statistician-vo6cqxmyeh8p6z5dpa2jpe.streamlit.app/)**
+
+---
 
 ## 🚀 安装与运行 (Installation & Usage)
 
@@ -45,7 +48,7 @@ cd Auto-Statistician
 ### 3. 安装依赖库
 建议在虚拟环境（如 venv 或 conda）中安装以下依赖：
 ```bash
-pip install pandas numpy scipy lifelines streamlit chardet
+pip install -r requirements.txt
 ```
 
 ### 4. 启动程序
@@ -74,7 +77,7 @@ streamlit run 自动统计分析专家-webUI.py
 ## 🛠️ 技术栈 (Tech Stack)
 
 * **前端交互**: [Streamlit](https://streamlit.io/)
-* **数据处理**: [Pandas](https://pandas.pydata.org/), [NumPy](https://numpy.org/)
+* **数据处理**: [Pandas](https://pandas.pydata.org/), [NumPy](https://numpy.org/), [Scikit-learn](http://scikit-learn.org/)
 * **统计计算**: [SciPy](https://scipy.org/) (常规统计检验), [Lifelines](https://lifelines.readthedocs.io/) (生存分析)
 * **编码检测**: [Chardet](https://pypi.org/project/chardet/)
 
