@@ -124,6 +124,7 @@ def format_statistical_results(
 		decimal_places: int,
 		p_decimal_places: int,
 		if_category_space: bool,
+		if_simple_p_format: bool,
 		if_star_symbol: bool
 ) -> pd.DataFrame:
 	"""
@@ -143,6 +144,7 @@ def format_statistical_results(
 		decimal_places: 描述性结果精确位数
 		p_decimal_places: p值结果精确位数
 		if_category_space: 是否在分类变量各类别名称前加2个空格
+		if_simple_p_format: 是否去掉P值小数点前面的0
 		if_star_symbol: 是否在不同显著性P值结果后面添加对应数量的*号
 
 	Returns:
@@ -205,7 +207,7 @@ def format_statistical_results(
 			# 使用列表先写分类变量开头首行，由于var可能是int列数，所以记录时都转换为str
 			var_string = f"{var}, {chi2_result_connector}" if add_connector else f"{var}"
 			# 格式化p值结果
-			p_value_str = process_p_value(statistical_results_dict[var][-1], p_decimal_places, if_star_symbol)
+			p_value_str = process_p_value(statistical_results_dict[var][-1], p_decimal_places, if_simple_p_format, if_star_symbol)
 			
 			data_dict = {
 				'Variable': var_string,
@@ -316,7 +318,7 @@ def format_statistical_results(
 					)
 					value_groups[cat] = value_string
 			
-			p_value_str = process_p_value(statistical_results_dict[var][-1], p_decimal_places, if_star_symbol)
+			p_value_str = process_p_value(statistical_results_dict[var][-1], p_decimal_places, if_simple_p_format, if_star_symbol)
 			data_dict = {
 				'Variable': var_string,
 				overall_col: overall_string,

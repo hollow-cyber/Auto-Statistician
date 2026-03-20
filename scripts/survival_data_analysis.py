@@ -210,6 +210,7 @@ def format_survival_results(
 		decimal_places: int,
 		p_decimal_places: int,
 		if_category_space: bool,
+		if_simple_p_format: bool,
 		if_star_symbol: bool
 ) -> pd.DataFrame:
 	"""
@@ -225,6 +226,7 @@ def format_survival_results(
 		decimal_places: 描述性结果精确位数
 		p_decimal_places: p值结果精确位数
 		if_category_space: 是否在分类变量各类别名称前加2个空格
+		if_simple_p_format: 是否去掉P值小数点前面的0
 		if_star_symbol: 是否在不同显著性P值结果后面添加对应数量的*号
 
 	Returns:
@@ -269,9 +271,8 @@ def format_survival_results(
 								'Category': cat_name,
 								'HR (95% CI)': f'{1:.{decimal_places}f}(Ref.)',
 								'P-Value': '',
-								'Overall P-Value': process_p_value(row['P-Value'], p_decimal_places,
-								                                   if_star_symbol) if pd.notna(
-									row['P-Value']) else '',
+								'Overall P-Value': process_p_value(row['P-Value'], p_decimal_places, if_simple_p_format,
+								                                   if_star_symbol) if pd.notna(row['P-Value']) else '',
 							})
 							# 记录已经规范化结果的index，后面就会直接跳过这些index
 							added_index.add(index)
@@ -292,8 +293,8 @@ def format_survival_results(
 							'Variable': "",
 							'Category': cat_name,
 							'HR (95% CI)': description,
-							'P-Value': process_p_value(row['P-Value'], p_decimal_places, if_star_symbol) if pd.notna(
-								row['P-Value']) else '',
+							'P-Value': process_p_value(row['P-Value'], p_decimal_places, if_simple_p_format,
+							                           if_star_symbol) if pd.notna(row['P-Value']) else '',
 							'Overall P-Value': '',
 						})
 		
@@ -311,8 +312,8 @@ def format_survival_results(
 				'Variable': f"{var}",
 				'Category': '',
 				'HR (95% CI)': description,
-				'P-Value': process_p_value(row['P-Value'], p_decimal_places, if_star_symbol) if pd.notna(
-					row['P-Value']) else '',
+				'P-Value': process_p_value(row['P-Value'], p_decimal_places, if_simple_p_format,
+				                           if_star_symbol) if pd.notna(row['P-Value']) else '',
 				'Overall P-Value': '',
 			})
 	

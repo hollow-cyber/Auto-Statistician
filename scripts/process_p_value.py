@@ -7,6 +7,7 @@ West China Hospital, Sichuan University.
 def process_p_value(
 		p_value: float,
 		p_decimal_places: int,
+		if_simple_p_format: bool,
 		if_star_symbol: bool
 ) -> str:
 	"""
@@ -15,6 +16,7 @@ def process_p_value(
 	Args:
 		p_value: p_value浮点数
 		p_decimal_places: P值精确到小数点后多少位
+		if_simple_p_format: 是否去掉P值小数点前面的0
 		if_star_symbol: 是否根据不同显著性水平在P值后面添加对应数量的*号
 		
 	Returns:
@@ -33,5 +35,8 @@ def process_p_value(
 			elif p_value < 0.05:
 				star_symbol_num = 1
 		p_value_str = f"{p_value:.{p_decimal_places}f}" + "*" * star_symbol_num
+	
+	if if_simple_p_format:
+		p_value_str = p_value_str.replace("0.", ".", 1)
 	
 	return p_value_str
