@@ -38,7 +38,7 @@ def main() -> None:
 		sidebar_title="程序参数设置",
 		logo_path=image_path,
 		notice_str="本项目受到四川大学华西医院、国家老年疾病临床医学研究中心的支持，请勿商用。",
-		warning_str = None,
+		# warning_str=None,
 	)
 	
 	with st.expander("点击查看当前版本更新特性功能"):
@@ -47,7 +47,7 @@ def main() -> None:
 		**✨ v1.0 版本惊艳更新！**
 		- 🤗1：狠狠优化了UI交互界面。
 		- 🤤2：新增了用于生存分析数据的单因素统计功能。
-		- 🥰3：新增了简单处理数据集中的缺失值功能。缺失值的计数结果见格式化统计分析结果表格最后一列。
+		- 🥰3：新增了简单处理数据集中的缺失值功能，缺失值的计数结果见格式化统计分析结果表格最后一列。
 		""")
 	
 	# 画一条分割线
@@ -338,6 +338,8 @@ def main() -> None:
 	with cols[1]:
 		p_decimal_places = st.number_input(f'P值结果保留到几位小数：', min_value=1, max_value=6, value=3, step=1,
 		                                   help="可设置的范围为1到6")
+	if_simple_p_format = st.sidebar.checkbox("对于形似“0.xxx”的P值结果，写成“.xxx”", value=False,
+	                                         help="注意如果复制结果到excel中则其会自动补充小数点前面的0")
 	if_star_symbol = st.sidebar.checkbox("在不同显著性水平P值结果后面添加对应数量的*号",
 	                                     help="此功能会同时在表格末尾会添加一行题注，但注意符号不是上标形式，基础显著性是0.05")
 	
@@ -365,6 +367,7 @@ def main() -> None:
 				                                                                decimal_places,
 				                                                                p_decimal_places,
 				                                                                if_category_space,
+				                                                                if_simple_p_format,
 				                                                                if_star_symbol)
 			
 			elif analysis_task == analysis_funcs[2]:
@@ -377,6 +380,7 @@ def main() -> None:
 				                                                             decimal_places,
 				                                                             p_decimal_places,
 				                                                             if_category_space,
+				                                                             if_simple_p_format,
 				                                                             if_star_symbol)
 			show_custom_toast("统计分析处理完毕", icon="🎉")
 			
