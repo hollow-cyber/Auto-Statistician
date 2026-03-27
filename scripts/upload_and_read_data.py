@@ -62,10 +62,10 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 	if file_upload_method == "上传文件":
 		# 在侧边栏创建文件上传器
 		uploaded_file = st.sidebar.file_uploader(
-			"选择txt文件",
+			"选择数据文件",
 			type=['txt', 'csv'],
 			key="file_uploader",
-			# help="支持多种列数据分隔符号内容的txt文件"
+			help="支持多种列数据分隔符号内容的txt文件和csv文件"
 		)
 		file_extension = ".txt"
 		if uploaded_file:
