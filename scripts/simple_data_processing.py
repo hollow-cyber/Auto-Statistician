@@ -58,32 +58,42 @@ def detect_nan(
 		是否有缺失值。
 	"""
 	
-	# 将原始数据集统一转为 numpy 数组进行处理
-	arr = data.values if isinstance(data, pd.DataFrame) else data
-	
-	# 获取所有缺失值的布尔掩码
-	try:
-		mask = np.isnan(arr)
-	except TypeError:
-		st.error("❌ 程序无法处理该数据类型，请检查你传入的数据集及分隔符号。")
-		st.stop()
-	
-	# 统计汇总信息
-	total_nan = np.sum(mask)
-	if total_nan:
-		rows_with_nan = np.sum(np.any(mask, axis=1))
-		cols_with_nan = np.sum(np.any(mask, axis=0))
-		st.warning(
-			f"⚠️ 程序检测到原始数据集中共有 {cols_with_nan} 列 {rows_with_nan} 行包含缺失值，共计 {total_nan} 个缺失值。")
-		return True
+	# 统一使用 pandas 方法处理
+	if isinstance(data, pd.DataFrame):
+		mask = data.isna()
+		total_nan = mask.sum().sum()
+		if total_nan:
+			rows_with_nan = mask.any(axis=1).sum()
+			cols_with_nan = mask.any(axis=0).sum()
+			st.warning(
+				f"⚠️ 程序检测到原始数据集中共有 {cols_with_nan} 列 {rows_with_nan} 行包含缺失值，共计 {int(total_nan)} 个缺失值。")
+			return True
+		else:
+			return False
 	else:
-		return False
+		# numpy 数组的情况
+		arr = data
+		try:
+			mask = np.isnan(arr)
+		except TypeError:
+			st.error("❌ 程序无法处理该数据类型，请检查你传入的数据集及分隔符号。进行简单插补时")
+			st.stop()
+		
+		total_nan = np.sum(mask)
+		if total_nan:
+			rows_with_nan = np.sum(np.any(mask, axis=1))
+			cols_with_nan = np.sum(np.any(mask, axis=0))
+			st.warning(
+				f"⚠️ 程序检测到原始数据集中共有 {cols_with_nan} 列 {rows_with_nan} 行包含缺失值，共计 {total_nan} 个缺失值。")
+			return True
+		else:
+			return False
 
 
 def delete_nan(
 		data: pd.DataFrame | np.ndarray,
 		delete_type: Literal["col", "row"] = 'row',
-) -> pd.DataFrame | np.ndarray:
+) -> pd.DataFrame:
 	"""
 	使用布尔掩码删除含有缺失值的行或列
 	
@@ -136,7 +146,7 @@ def delete_nan(
 				                  icon="✅")
 			else:
 				show_custom_toast("程序未发现任何缺失值，不做处理。")
-			return clean_data
+			return pd.DataFrame(clean_data)
 
 
 def simple_impute_nan(
@@ -171,6 +181,7 @@ def simple_impute_nan(
 			non_null = series.dropna()
 			return series.fillna(np.random.choice(non_null) if not non_null.empty else np.nan)
 		elif method == 'random':
+			# noinspection PyTypeChecker
 			return series.fillna(
 				round(np.random.uniform(series.min(), np.nextafter(series.max(), np.inf)), num_precision))
 		elif method == 'constant':
@@ -186,8 +197,12 @@ def simple_impute_nan(
 	nan_cols = [c for c in data.columns if data[c].isna().any()]
 	
 	for col in nan_cols:
-		# 获取该列的数字精度
-		num_precision = get_original_precision(data[col])
+		try:
+			# 获取该列的数字精度
+			num_precision = get_original_precision(data[col])
+		except TypeError:
+			show_custom_toast("简单插补要求数据集中不能有非数字内容，请检查。", icon="❌")
+			st.stop()
 		
 		# 根据是否分组来选择不同的插补方式
 		if match_cols:
@@ -219,7 +234,8 @@ def st_impute_data(
 	
 	if detect_nan(data):
 		st.sidebar.divider()
-		if st.sidebar.toggle('简单处理原数据集中的缺失值', on_change=clear_st_data_processed):
+		if st.sidebar.toggle('简单处理原数据集中的缺失值', on_change=clear_st_data_processed,
+		                     help="处理时数据集中不能有非数字内容"):
 			if "data_processed" not in st.session_state:
 				st.session_state.data_processed = None
 			
@@ -271,7 +287,7 @@ def st_impute_data(
 				else:
 					if st.button("开始插补"):
 						st.session_state.data_processed = simple_impute_nan(data, match_cols,
-						                                              impute_method_dict.get(impute_method),
+						                                              impute_method_dict[impute_method],
 						                                              constant_val=constant_val)
 						show_custom_toast(f"程序已对原始数据集进行了{impute_method}简单缺失值处理。", icon="✅")
 			with cols[1]:

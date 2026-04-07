@@ -22,6 +22,11 @@ def clear_all_inputs() -> None:
 	st.session_state.pop("file_select", None)  # 清空文件下拉框
 
 
+def clear_st_results_df() -> None:
+	"""定义一个回调函数，用来清空计算结果，保证在重新选择执行的任务后需要重新点击计算按钮才出现结果"""
+	st.session_state.pop('format_results_df', None)
+	
+	
 def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 	"""
 	用户上传/选择数据文件并返回读取的dataframe，同时给出数据文件信息
@@ -52,26 +57,27 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 	st.sidebar.markdown("**数据文件上传/选择设置**")
 	
 	uploaded_file, file_dir, file_name = None, None, None
-	# file_upload_method = st.sidebar.radio("请选择上传文件或者输入路径读取文件：", ["上传文件", "输入路径读取文件"],
-	                                      # key="method_radio",
-	                                      # horizontal=True,
-	                                      # # 每次切换选项，都先执行清空操作
-	                                      # on_change=clear_all_inputs,
-	                                      # help="选择上传文件会把文件上传到streamlit服务器，如果是隐私数据建议选择通过输入路径读取文件，这样就只会读取到本地计算机的内存中")
-	file_upload_method = "上传文件"
+	file_upload_method = st.sidebar.radio("请选择上传文件或者输入路径读取文件：", ["上传文件", "输入路径读取文件"],
+	                                      key="method_radio",
+	                                      horizontal=True,
+	                                      # 每次切换选项，都先执行清空操作
+	                                      on_change=clear_all_inputs,
+	                                      help="选择上传文件会把文件上传到streamlit服务器，如果是隐私数据建议选择通过输入路径读取文件，这样就只会读取到本地计算机的内存中")
+	
 	if file_upload_method == "上传文件":
 		# 在侧边栏创建文件上传器
 		uploaded_file = st.sidebar.file_uploader(
 			"选择数据文件",
 			type=['txt', 'csv'],
 			key="file_uploader",
-			help="支持多种列数据分隔符号内容的txt文件和csv文件"
+			help="支持多种列数据分隔符号内容的txt文件和csv文件",
+			on_change=clear_st_results_df
 		)
 		file_extension = ".txt"
 		if uploaded_file:
 			file_extension = os.path.splitext(uploaded_file.name)[1].lower()
 	else:
-		file_dir = st.sidebar.text_input("txt/csv文件所在的文件夹路径：", placeholder="例如：D:\数据处理\示例文件夹",
+		file_dir = st.sidebar.text_input("txt/csv文件所在的文件夹路径：", placeholder=r"例如：D:\数据处理\示例文件夹",
 		                                 key="file_dir_input",
 		                                 help="Windows系统用户可在文件夹窗口顶部的地址栏（显示路径的地方）点击右键复制地址")
 		
@@ -95,8 +101,9 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 				                                 [os.path.basename(file) for file in all_files],
 				                                 index=None,
 				                                 key="file_select",
-				                                 placeholder="请下拉选择文件")
-				if file_name is None:
+				                                 placeholder="请下拉选择文件",
+				                                 on_change=clear_st_results_df)
+				if not file_name:
 					st.stop()
 				file_extension = os.path.splitext(file_name)[1].lower()
 				
@@ -178,6 +185,8 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 			st.stop()
 	else:
 		# 直接根据路径读取为DataFrame
+		assert isinstance(file_dir, str)
+		assert isinstance(file_name, str)
 		file_path = os.path.join(file_dir, file_name)
 		encoding = detect_file_encoding(file_path)
 		df = pd.read_csv(file_path,
