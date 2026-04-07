@@ -349,7 +349,7 @@ def main() -> None:
 	
 	cols = st.sidebar.columns([1, 1])
 	with cols[0]:
-		if st.button('开始统计分析'):
+		if st.button('开始统计分析', help="如果报错，请去掉数据集中的所有非数字内容后再试（空值可保留）"):
 			scripts.global_vars.button_click_times += 1
 			if scripts.global_vars.button_click_times % 5 == 0:
 				show_custom_toast("阿伟你又在连夜搞科研喔。休息一下吧，去收个病人好不好？", icon="🧐", top_gap=0.3)
