@@ -8,6 +8,7 @@ import pandas as pd
 import streamlit as st
 from scipy import stats
 from itertools import zip_longest
+from typing import cast
 
 from scripts.set_st_custom_style import set_st_header, show_custom_toast
 from scripts.upload_and_read_data import upload_and_read_data
@@ -38,7 +39,7 @@ def main() -> None:
 		sidebar_title="程序参数设置",
 		logo_path=image_path,
 		notice_str="本项目受到四川大学华西医院、国家老年疾病临床医学研究中心的支持，请勿商用。",
-		warning_str=None,
+		# warning_str=None,
 	)
 	
 	with st.expander("点击查看当前版本更新特性功能"):
@@ -71,38 +72,38 @@ def main() -> None:
 		2: "📉 生存分析数据单因素分析",
 	}
 	st.sidebar.markdown("**请选择你要进行的操作：**")
-	analysis_task = st.sidebar.segmented_control('请选择你要进行的操作：', analysis_funcs.values(),
+	analysis_task = cast(str, st.sidebar.segmented_control('请选择你要进行的操作：', analysis_funcs.values(),
 	                                             default=list(analysis_funcs.values())[0],
-	                                             on_change=clear_st_results_df, label_visibility="collapsed")
+	                                             on_change=clear_st_results_df, label_visibility="collapsed"))
 	
 	cols = st.sidebar.columns([1, 1])
 	if analysis_task == analysis_funcs[2]:
 		with cols[0]:
 			# 指定结局变量
-			dependent_var_name = st.selectbox(
+			dependent_var_name = cast(str, st.selectbox(
 				"结局指标/因变量名称或列数：",
 				data.columns.tolist(),
 				index=len(data.columns.tolist()) - 1,
 				help="请从传入的txt文件中选择结局指标名称或列数，仅支持单选，仅支持分类结局因变量"
-			)
+			))
 	else:
-		dependent_var_name = st.sidebar.selectbox(
+		dependent_var_name = cast(str, st.sidebar.selectbox(
 			"结局指标/因变量名称或列数：",
 			data.columns.tolist(),
 			index=len(data.columns.tolist()) - 1,
 			help="请从传入的txt文件中选择结局指标名称或列数，仅支持单选，仅支持分类结局因变量"
-		)
+		))
 	
-	time_var_name = None
+	time_var_name = ""
 	if analysis_task == analysis_funcs[2]:
 		with cols[1]:
 			# 指定生存时间变量
-			time_var_name = st.selectbox(
+			time_var_name = cast(str, st.selectbox(
 				"生存时间指标名称或列数：",
 				data.columns.tolist(),
 				index=len(data.columns.tolist()) - 2,
 				help="请从传入的txt文件中选择生存时间指标名称或列数，仅支持单选"
-			)
+			))
 		if (data[time_var_name] == 0).any():
 			st.error("❌ 程序发现生存时间列中包含0值，请检查。")
 	
@@ -149,7 +150,7 @@ def main() -> None:
 		st.stop()
 	
 	# 调用函数，自动识别出所有的协变量类型
-	categorical_vars = identify_categorical_columns(X, max_categories=max_unique_num)
+	categorical_vars = identify_categorical_columns(X, max_categories=max_unique_num) # noqa
 	continuous_vars = [var for var in X.columns if var not in categorical_vars]
 	# 初始化记录正态和非正态分布变量的列表
 	normal_dis_vars, non_normal_dis_vars = [], []
@@ -196,29 +197,29 @@ def main() -> None:
 	
 	# 设定一些分类变量输出格式的初始默认值，然后根据用户设置调整变量值
 	cal_column_pct = True
-	chi2_result_connector = None
+	chi2_result_connector = ""
 	if_category_space = False
-	mean_std_connector = None
-	quartiles_connector = None
-	hr_ci_connector = None
+	mean_std_connector = ""
+	quartiles_connector = ""
+	hr_ci_connector = ""
 	
 	# 如果进行常规统计分析，则要设定变量的值书写格式
 	if analysis_task == analysis_funcs[1]:
 		# 展示各变量分别属于哪些类型
 		# 过滤空的变量类型列表
-		non_empty_data = []
+		non_empty_cars = []
 		non_empty_cols = []
 		col_names = ["分类自变量", "正态分布自变量", "非正态分布自变量"]
-		for data, col in zip([categorical_vars, normal_dis_vars, non_normal_dis_vars], col_names):
-			if data:
-				non_empty_data.append(data)
+		for vars, col in zip([categorical_vars, normal_dis_vars, non_normal_dis_vars], col_names):
+			if vars:
+				non_empty_cars.append(vars)
 				non_empty_cols.append(col)
 		
 		# 考虑到不同类型的变量数量不一致的情况，使用 zip_longest 行转列并填充多余的位置为空字符串
 		# noinspection PyArgumentList
-		rows = list(zip_longest(*non_empty_data, fillvalue=''))
+		rows = list(zip_longest(*non_empty_cars, fillvalue=''))
 		with st.expander("程序检查传入的数据文件中各类型的变量如下："):
-			st.dataframe(pd.DataFrame(rows, columns=non_empty_cols))
+			st.dataframe(pd.DataFrame(rows, columns=non_empty_cols)) # noqa
 		
 		if categorical_vars:
 			with st.sidebar.container(border=True):
@@ -232,11 +233,11 @@ def main() -> None:
 					horizontal=True  # 横向排列
 				)
 				if chi2_result_connector == '自定义':
-					chi2_result_connector_customize = st.text_input(
+					chi2_result_connector_customize = cast(str, st.text_input(
 						"请输入自定义的样本量N和比例percent/ratio的书写格式：",
 						placeholder="例如: N [percent] 或 N [ratio]",
 						help="自定义的书写格式仅能包含一个N和一个percent或ratio。若不规范则会采用默认的 N(percent)"
-					)
+					))
 				# 规范的书写是离散型变量的小分类名前面会缩进一个字符，但是python无法做到
 				# 所以要么是在前面加两个空格，要么是用户自己设置缩进
 				if_category_space = st.checkbox("在分类变量的各分类名前面添加两个空格以模拟缩进一个字符的效果")
@@ -262,11 +263,11 @@ def main() -> None:
 					horizontal=True  # 横向排列
 				)
 				if mean_std_connector == '自定义':
-					mean_std_connector_customize = st.text_input(
+					mean_std_connector_customize = cast(str, st.text_input(
 						"请输入自定义的平均值mean和标准差std书写格式：",
 						placeholder="例如: mean[std]",
 						help="自定义的书写格式仅能包含一个mean和一个std。若不规范则会采用默认的mean±std"
-					)
+					))
 			if mean_std_connector == '自定义':
 				if mean_std_connector_customize == '':
 					mean_std_connector = "mean±std"
@@ -286,11 +287,11 @@ def main() -> None:
 					horizontal=True  # 横向排列
 				)
 				if quartiles_connector == '自定义':
-					quartiles_connector_customize = st.text_input(
+					quartiles_connector_customize = cast(str, st.text_input(
 						"请输入自定义的四分位数Q1, Q2, Q3书写格式：",
 						placeholder="例如: Q2(Q1 to Q3)",
 						help="自定义的书写格式仅能包含一个Q1, Q2, Q3。若不规范则会采用默认的Q2(Q1, Q3)"
-					)
+					))
 			if quartiles_connector == '自定义':
 				if quartiles_connector_customize == '':
 					quartiles_connector = "Q2(Q1, Q3)"
@@ -332,12 +333,12 @@ def main() -> None:
 	
 	cols = st.sidebar.columns([1, 1])
 	with cols[0]:
-		decimal_places = st.number_input(f'描述性输出结果保留到几位小数：', min_value=1, max_value=6, value=2,
+		decimal_places = cast(int, st.number_input(f'描述性输出结果保留到几位小数：', min_value=1, max_value=6, value=2,
 		                                 step=1,
-		                                 help="可设置的范围为1到6")
+		                                 help="可设置的范围为1到6"))
 	with cols[1]:
-		p_decimal_places = st.number_input(f'P值结果保留到几位小数：', min_value=1, max_value=6, value=3, step=1,
-		                                   help="可设置的范围为1到6")
+		p_decimal_places = cast(int, st.number_input(f'P值结果保留到几位小数：', min_value=1, max_value=6, value=3, step=1,
+		                                   help="可设置的范围为1到6"))
 	if_simple_p_format = st.sidebar.checkbox("对于形似“0.xxx”的P值结果，写成“.xxx”", value=False,
 	                                         help="注意如果复制结果到excel中则其会自动补充小数点前面的0")
 	if_star_symbol = st.sidebar.checkbox("在不同显著性水平P值结果后面添加对应数量的*号",
@@ -346,6 +347,11 @@ def main() -> None:
 	# 画一条分割线
 	st.divider()
 	st.sidebar.divider()
+	
+	assert isinstance(chi2_result_connector, str)
+	assert isinstance(mean_std_connector, str)
+	assert isinstance(quartiles_connector, str)
+	assert isinstance(hr_ci_connector, str)
 	
 	cols = st.sidebar.columns([1, 1])
 	with cols[0]:
@@ -392,7 +398,7 @@ def main() -> None:
 		你可点击下方的下载按钮进行下载。同时你也可复制下面关于统计分析方法学的介绍内容到你的文章当中。
 		""")
 		st.subheader(f"{analysis_task}格式化结果预览")
-		st.dataframe(st.session_state.format_results_df, use_container_width=True, hide_index=True)
+		st.dataframe(st.session_state.format_results_df, hide_index=True)
 		
 		# 最后写一段用户可以直接粘贴到文章中的统计分析方法学的介绍内容
 		show_analysis_method_content(analysis_funcs, analysis_task, chi2_result_connector, mean_std_connector)
