@@ -9,6 +9,7 @@ import glob
 import chardet
 import pandas as pd
 import streamlit as st
+from typing import cast
 
 from scripts.detect_file_encoding import detect_file_encoding
 
@@ -57,13 +58,13 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 	st.sidebar.markdown("**数据文件上传/选择设置**")
 	
 	uploaded_file, file_dir, file_name = None, None, None
-	# file_upload_method = st.sidebar.radio("请选择上传文件或者输入路径读取文件：", ["上传文件", "输入路径读取文件"],
-	#                                       key="method_radio",
-	#                                       horizontal=True,
-	#                                       # 每次切换选项，都先执行清空操作
-	#                                       on_change=clear_all_inputs,
-	#                                       help="选择上传文件会把文件上传到streamlit服务器，如果是隐私数据建议选择通过输入路径读取文件，这样就只会读取到本地计算机的内存中")
-	file_upload_method = "上传文件"
+	file_upload_method = st.sidebar.radio("请选择上传文件或者输入路径读取文件：", ["上传文件", "输入路径读取文件"],
+	                                      key="method_radio",
+	                                      horizontal=True,
+	                                      # 每次切换选项，都先执行清空操作
+	                                      on_change=clear_all_inputs,
+	                                      help="选择上传文件会把文件上传到streamlit服务器，如果是隐私数据建议选择通过输入路径读取文件，这样就只会读取到本地计算机的内存中")
+	
 	if file_upload_method == "上传文件":
 		# 在侧边栏创建文件上传器
 		uploaded_file = st.sidebar.file_uploader(
@@ -157,12 +158,12 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 						file_like_object = io.StringIO(file_content.decode(encoding))
 						
 						# 读取为DataFrame
-						df = pd.read_csv(
+						df = cast(pd.DataFrame, pd.read_csv(
 							file_like_object,
 							sep=selected_sep,
 							header=0 if has_header else None,
 							encoding=encoding
-						)
+						))
 						# 如果第一行不是列名，则人为修改列名
 						if not has_header:
 							df.columns = [f"第{i + 1}列" for i in range(df.shape[1])]
@@ -189,10 +190,10 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 		assert isinstance(file_name, str)
 		file_path = os.path.join(file_dir, file_name)
 		encoding = detect_file_encoding(file_path)
-		df = pd.read_csv(file_path,
+		df = cast(pd.DataFrame, pd.read_csv(file_path,
 		                 sep=selected_sep,
 		                 header=0 if has_header else None,
-		                 encoding=encoding)
+		                 encoding=encoding))
 	
 	# 显示成功信息
 	st.success("✅ 数据文件读取成功！")
@@ -215,14 +216,14 @@ def upload_and_read_data() -> tuple[pd.DataFrame, str, str]:
 	# 	'列名': df.columns,
 	# 	'数据类型': df.dtypes.values
 	# })
-	# st.dataframe(dtypes_df, use_container_width=True)
+	# st.dataframe(dtypes_df)
 	
 	with cols[1]:
 		st.subheader("🔍 数据预览（前5行）")
-		st.dataframe(df.head(), use_container_width=True)
+		st.dataframe(df.head())
 	
 	# 显示统计信息
 	st.subheader("📰 描述性数据结果")
-	st.dataframe(df.describe(), use_container_width=True)
+	st.dataframe(df.describe())
 	
 	return df, file_name, output_file_extension

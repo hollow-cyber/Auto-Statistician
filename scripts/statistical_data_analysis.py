@@ -28,7 +28,7 @@ def auto_statistical_analysis_and_summary(
 		X: 包含自变量的数据集
 		y: 包含因变量的数据集
 		categorical_vars: 分类变量的列名
-		normal_dis_vars): 正太分布变量的列名
+		normal_dis_vars: 正太分布变量的列名
 		cal_column_pct: 按列还是按行计算百分比
 
 	Returns:
@@ -116,9 +116,9 @@ def format_statistical_results(
 		categorical_vars: list,
 		normal_dis_vars: list,
 		cal_column_pct: bool,
-		chi2_result_connector: str | None,
-		mean_std_connector: str | None,
-		quartiles_connector: str | None,
+		chi2_result_connector: str,
+		mean_std_connector: str,
+		quartiles_connector: str,
 		add_connector: bool,
 		add_overall: bool,
 		decimal_places: int,
@@ -190,7 +190,7 @@ def format_statistical_results(
 	
 	for var in statistical_results_dict.keys():
 		# 计算当前变量的缺失值信息
-		missing_count = X[var].isnull().sum()
+		missing_count = int(X[var].isnull().sum())
 		total_count = len(X[var])
 		# 格式化为 "Count (Percent%)"
 		missing_string = f"{missing_count} ({missing_count / total_count:.{decimal_places}%})"

@@ -68,7 +68,7 @@ def set_st_header(
 		unsafe_allow_html=True
 	)
 	
-	if logo_path:
+	if logo_path and os.path.isfile(logo_path):
 		# 转换图片为 base64
 		logo_base64 = get_image_base64(logo_path)
 		
@@ -165,9 +165,10 @@ def set_st_header(
 		}
 		</style>
 		"""
-	# 在调用处稍微修改下 html_content 以适应文字层级
-	html_content = f"<div class='fancy-gradient-box'><span>{notice_str}</span></div>"
-	st.markdown(css_style + html_content, unsafe_allow_html=True)
+	if notice_str:
+		# 在调用处稍微修改下 html_content 以适应文字层级
+		html_content = f"<div class='fancy-gradient-box'><span>{notice_str}</span></div>"
+		st.markdown(css_style + html_content, unsafe_allow_html=True)
 	
 	if sidebar_title:
 		# 添加侧边栏组件
@@ -240,6 +241,8 @@ def show_custom_toast(
 	except ImportError:
 		# 设置默认屏幕高度为1080
 		height = 1080
+		# 显式声明 tkinter 未定义
+		tkinter = None
 	top_distance = int(height * top_gap) if top_gap < 1 else int(top_gap)
 	
 	toast_html = f"""

@@ -82,13 +82,13 @@ def screen_categorical_vars(
 			# 步骤3：根据有效分组的数量，智能选择统计检验方法
 			if 2 <= len(valid_groups) <= 5:
 				# 如果有效分组数在2到5之间，使用Log-rank检验
-				method = 'Log-rank'
+				# method = 'Log-rank'
 				# 使用 multivariate_logrank_test获取总体p值，这是 logrank_test 的底层函数，更适合这种数据格式
 				global_p = multivariate_logrank_test(model_df[time_col], model_df[var], model_df[event_col]).p_value
 			
 			else:
 				# 如果分组数大于5，使用单变量Cox模型
-				method = 'Cox Model'
+				# method = 'Cox Model'
 				# 对于多分类变量，使用似然比检验的p值作为其总体显著性的p值
 				global_p = cph.log_likelihood_ratio_test().p_value
 			
@@ -206,7 +206,7 @@ def format_survival_results(
 		event_col: str,
 		categorical_vars: list,
 		continuous_vars: list,
-		hr_ci_connector: str | None,
+		hr_ci_connector: str,
 		decimal_places: int,
 		p_decimal_places: int,
 		if_category_space: bool,
@@ -298,7 +298,7 @@ def format_survival_results(
 							'Overall P-Value': '',
 						})
 		
-		elif var in continuous_vars:
+		elif var in continuous_vars and cont_results is not None:
 			# 明确取第一个匹配变量名的行
 			row = cont_results[cont_results['Variable'] == str(var)].iloc[0]
 			description = hr_ci_connector_f.format(
@@ -321,7 +321,12 @@ def format_survival_results(
 	format_results_df = pd.DataFrame(table_rows)
 	
 	if if_star_symbol:
-		p_value_list = cat_results["P-Value"].tolist() + cont_results["P-Value"].tolist()
+		p_value_list = []
+		if cat_results is not None:
+			p_value_list.extend(cat_results["P-Value"].tolist())
+		if cont_results is not None:
+			p_value_list.extend(cont_results["P-Value"].tolist())
+			
 		star_symbol_string = ''
 		if any(p_value < 0.05 for p_value in p_value_list):
 			star_symbol_string += '*: p<0.05, '

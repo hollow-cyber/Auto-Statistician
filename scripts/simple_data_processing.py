@@ -137,7 +137,7 @@ def delete_nan(
 				show_custom_toast(f"程序已删除 {deleted_count} 条含空值的数据条，剩余 {len(clean_data)} 条。", icon="✅")
 			else:
 				show_custom_toast("程序未发现任何缺失值，不做处理。")
-			return clean_data
+			return pd.DataFrame(clean_data)
 		else:
 			clean_data = arr[:, ~mask]
 			deleted_count = np.sum(mask)
